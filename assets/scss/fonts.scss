@@ -1,0 +1,29 @@
+@font-face {
+  font-family: "Roboto-Medium";
+  src: local("Robotomedium"),
+    url("~assets/fonts/Roboto-medium.woff2") format("woff2"),
+    url("~assets/fonts/Roboto-medium.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Blogger Sans-Medium";
+  src: local("Blogger Sans-Medium"),
+    url("~assets/fonts/Bloggersans-medium.woff2") format("woff2"),
+    url("~assets/fonts/Bloggersans-medium.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Blogger Sans-Bold";
+  src: local("Blogger Sans-Bold"),
+    url("~assets/fonts/Bloggersans-bold.woff2") format("woff2"),
+    url("~assets/fonts/Bloggersans-bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}

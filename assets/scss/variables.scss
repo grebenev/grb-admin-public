@@ -1,0 +1,53 @@
+/*  ===== Colors ===== */
+$gray: #716f6c;
+$blue: #0097d3;
+$dark: #000000;
+$light: #ffffff;
+
+/*  ===== Sizes ===== */
+$tablet: 768px;
+$desktop: 1300px;
+
+// width
+$width-mobile: 90%;
+$width-tablet: 80%;
+$width-desktop: 1400px;
+
+// paddings
+$pad-mobile: 10px;
+$pad-tablet: 20px;
+$pad-desktop: 50px;
+
+/*  ===== Mixins ===== */
+@mixin center() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin position-center() {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+@mixin font(
+  $name: "Roboto-medium",
+  $size: false,
+  $height: false,
+  $weight: false
+) {
+  @if $name {
+    font-family: $name, Arial, sans-serif;
+  }
+  @if $size {
+    font-size: $size;
+  }
+  @if $height {
+    line-height: $height;
+  }
+  @if $weight {
+    font-weight: $weight;
+  }
+}
