@@ -38,6 +38,7 @@ export default class Dropzone extends Vue {
 
     const allowedType: string[] = [
       'image/jpeg',
+      'image/webp',
       'image/png',
       'image/gif',
       'image/svg+xml',
