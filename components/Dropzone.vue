@@ -13,14 +13,10 @@
 </template>
 
 <script lang="ts">
-import ImageUi, { ImageConfig } from '@/components/UI/ImageUi.vue';
 import { Component, Vue, Prop, Ref } from 'nuxt-property-decorator';
+import { ImageConfig } from '@/components/UI/ImageUi.vue';
 
-@Component({
-  components: {
-    ImageUi,
-  },
-})
+@Component
 export default class Dropzone extends Vue {
   @Ref() readonly drop!: HTMLFormElement;
 

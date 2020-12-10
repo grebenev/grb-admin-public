@@ -33,9 +33,8 @@
 </template>
 
 <script lang="ts">
-import ImageUi, { ImageConfig } from '@/components/UI/ImageUi.vue';
-import ButtonUi from '@/components/UI/ButtonUi.vue';
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
+import { ImageConfig } from '@/components/UI/ImageUi.vue';
 
 interface CardConfig {
   title: string;
@@ -46,12 +45,7 @@ interface CardConfig {
   stockOuantity: number;
 }
 
-@Component({
-  components: {
-    ButtonUi,
-    ImageUi,
-  },
-})
+@Component
 export default class Card extends Vue {
   @Prop({ type: Object, required: true })
   readonly product!: CardConfig;
