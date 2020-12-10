@@ -2,18 +2,15 @@
   <section>
     <h1>{{ formName }}</h1>
     <form @submit.prevent="onSubmit">
-      <section v-for="select in Object.keys(selectData)" :key="select">
+      <div v-for="select in Object.keys(selectData)" :key="select">
         Choose {{ select }}
         <SelectUi
           :config="selectData[select]"
           v-model="selectData[select].value"
         />
-      </section>
+      </div>
 
-      <div
-        v-for="(input, index) in Object.keys(this.config.inputs)"
-        :key="index"
-      >
+      <div v-for="(input, index) in Object.keys(inputData)" :key="index">
         <InputUi
           v-model="inputData[input].value"
           :placeholder="inputData[input].placeholder"
@@ -23,7 +20,9 @@
         </InputUi>
       </div>
 
-      <Dropzone />
+      <div v-if="config.dropzone">
+        <Dropzone />
+      </div>
 
       <ButtonUi>Submit</ButtonUi>
     </form>
@@ -31,29 +30,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator';
-import ButtonUi from '@/components/UI/ButtonUi.vue';
-import Dropzone from '@/components/Dropzone.vue';
+import { Component, Vue, Prop, Emit } from 'nuxt-property-decorator';
 
-import InputUi, { InputConfig } from '@/components/UI/InputUi.vue';
-import SelectUi, { SelectConfig } from '@/components/UI/SelectUi.vue';
+import { InputConfig } from '@/components/UI/InputUi.vue';
+import { SelectConfig } from '@/components/UI/SelectUi.vue';
 
 export interface FormConfig {
+  dropzone?: boolean;
   inputs: InputConfig;
-  selects: SelectConfig;
+  selects?: SelectConfig;
 }
 
 interface EmittedData {
   [key: string]: string | undefined;
 }
 
-@Component({
-  components: {
-    ButtonUi,
-    InputUi,
-    Dropzone,
-  },
-})
+@Component
 export default class Form extends Vue {
   @Prop({ type: Object })
   readonly config!: FormConfig;
@@ -73,19 +65,19 @@ export default class Form extends Vue {
     return data;
   }
 
-  onSubmit() {
-    if (!this.inputData) {
-      return;
-    }
-
+  @Emit()
+  onSubmit(): EmittedData {
     const inputData = this.getFormData(this.inputData);
     const selectData = this.getFormData(this.selectData);
 
-    this.$emit('onSubmit', { ...inputData, ...selectData });
+    return { ...inputData, ...selectData };
   }
 
   created() {
+    if (!this.$props.config.inputs) return;
     this.inputData = this.$props.config.inputs;
+
+    if (!this.$props.config.selects) return;
     this.selectData = this.$props.config.selects;
   }
 }
