@@ -5,7 +5,7 @@
 
       <section>
         <Form
-          @onSubmit="onSubmit($event)"
+          @on-submit="onSubmit($event)"
           :config="formConfiguration"
           formName="Add new product"
         />
@@ -21,10 +21,9 @@
 </template>
 
 <script lang="ts">
-import Form, { FormConfig } from '@/components/Form.vue';
-import ButtonUi from '@/components/UI/ButtonUi.vue';
+import { FormConfig } from '@/components/Form.vue';
 
-import { Component, Vue } from 'nuxt-property-decorator';
+import { Component, Vue, Emit } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
 import { AxiosResponse, AxiosPromise, AxiosError } from 'axios';
 
@@ -34,26 +33,19 @@ interface Select {
   _id: string;
 }
 
-@Component({
-  components: {
-    Form,
-    ButtonUi,
-  },
-})
+@Component
 export default class Product extends Vue {
   header: string = 'Product page';
   messages: { message: string }[] = [];
 
   async onSubmit(formData: {}): Promise<void> {
-    console.log(formData);
-
     await this.$axios
       .post('http://localhost:3000/api/products/product', formData)
 
       .then((res: AxiosResponse) => {
         this.messages = res.data.success;
 
-        // this.$router.push('/');
+        this.$router.push('/');
       })
       .catch((err: AxiosError) => {
         this.messages = err.response?.data.errors;
@@ -84,6 +76,9 @@ export default class Product extends Vue {
 
         return {
           formConfiguration: {
+            dropzone: true,
+
+            // inputs props
             inputs: {
               title: {
                 name: 'Заголовок',
@@ -106,6 +101,7 @@ export default class Product extends Vue {
                 type: 'number',
               },
             },
+            // selects props
             selects: {
               owner: {
                 options: [
