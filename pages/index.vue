@@ -2,7 +2,7 @@
   <main>
     <div class="container">
       <h1>{{ header }}</h1>
-      {{ products }}
+
       <section>
         <ButtonUi>Add new product</ButtonUi>
       </section>
