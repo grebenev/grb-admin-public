@@ -4,18 +4,8 @@
       <h1>{{ header }}</h1>
 
       <section>
-        <Form
-          @on-submit="onSubmit($event)"
-          :config="formConfiguration"
-          formName="Add new category"
-        />
+        <Form :config="formConfiguration" formName="Add new category" />
       </section>
-
-      <div v-if="messages">
-        <div v-for="(message, index) in messages" :key="index">
-          MESSAGE: {{ message.message }}
-        </div>
-      </div>
     </div>
   </main>
 </template>
@@ -32,6 +22,7 @@ export default class Category extends Vue {
   messages: { message: string }[] = [];
 
   formConfiguration: FormConfig = {
+    postApi: 'categories/category',
     inputs: {
       category: {
         name: 'Create a new caterory',
@@ -41,18 +32,18 @@ export default class Category extends Vue {
     },
   };
 
-  async onSubmit(formData: {}): Promise<void> {
-    await this.$axios
-      .post('http://localhost:3000/api/categories/category', formData)
+  // async onSubmit(formData: {}): Promise<void> {
+  //   await this.$axios
+  //     .post('http://localhost:3000/api/categories/category', formData)
 
-      .then((res: AxiosResponse) => {
-        this.messages = res.data.success;
+  //     .then((res: AxiosResponse) => {
+  //       this.messages = res.data.success;
 
-        this.$router.push('/');
-      })
-      .catch((err: AxiosError) => {
-        this.messages = err.response?.data.errors;
-      });
-  }
+  //       this.$router.push('/');
+  //     })
+  //     .catch((err: AxiosError) => {
+  //       this.messages = err.response?.data.errors;
+  //     });
+  // }
 }
 </script>

@@ -4,18 +4,8 @@
       <h1>{{ header }}</h1>
 
       <section>
-        <Form
-          @on-submit="onSubmit($event)"
-          :config="formConfiguration"
-          formName="Add new product"
-        />
+        <Form :config="formConfiguration" formName="Add new product" />
       </section>
-
-      <div v-if="messages">
-        <div v-for="(message, index) in messages" :key="index">
-          MESSAGE: {{ message.message }}
-        </div>
-      </div>
     </div>
   </main>
 </template>
@@ -23,34 +13,18 @@
 <script lang="ts">
 import { FormConfig } from '@/components/Form.vue';
 
-import { Component, Vue, Emit } from 'nuxt-property-decorator';
+import { Component, Vue } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
-import { AxiosResponse, AxiosPromise, AxiosError } from 'axios';
 
 interface Select {
-  type: string;
-  name: string;
+  type?: string;
+  name?: string;
   _id: string;
 }
 
 @Component
 export default class Product extends Vue {
   header: string = 'Product page';
-  messages: { message: string }[] = [];
-
-  async onSubmit(formData: {}): Promise<void> {
-    await this.$axios
-      .post('http://localhost:3000/api/products/product', formData)
-
-      .then((res: AxiosResponse) => {
-        this.messages = res.data.success;
-
-        this.$router.push('/');
-      })
-      .catch((err: AxiosError) => {
-        this.messages = err.response?.data.errors;
-      });
-  }
 
   asyncData({ $axios, error }: Context) {
     return Promise.all([
@@ -77,6 +51,7 @@ export default class Product extends Vue {
         return {
           formConfiguration: {
             dropzone: true,
+            postApi: 'products/product',
 
             // inputs props
             inputs: {

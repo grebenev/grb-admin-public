@@ -24,19 +24,26 @@
         <Dropzone />
       </div>
 
+      <div v-if="messages">
+        <div v-for="(message, index) in messages" :key="index">
+          MESSAGE: {{ message.message }}
+        </div>
+      </div>
+
       <ButtonUi>Submit</ButtonUi>
     </form>
   </section>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Emit } from 'nuxt-property-decorator';
-
+import { Component, Vue, Prop } from 'nuxt-property-decorator';
+import { AxiosResponse, AxiosPromise, AxiosError } from 'axios';
 import { InputConfig } from '@/components/UI/InputUi.vue';
 import { SelectConfig } from '@/components/UI/SelectUi.vue';
 
 export interface FormConfig {
   dropzone?: boolean;
+  postApi: string;
   inputs: InputConfig;
   selects?: SelectConfig;
 }
@@ -55,6 +62,7 @@ export default class Form extends Vue {
 
   inputData: InputConfig = {};
   selectData: SelectConfig = {};
+  messages: { message: string }[] = [];
 
   getFormData(expData: InputConfig | SelectConfig): EmittedData {
     let data: EmittedData = {};
@@ -65,12 +73,25 @@ export default class Form extends Vue {
     return data;
   }
 
-  @Emit()
-  onSubmit(): EmittedData {
+  async onSubmit(): Promise<void> {
     const inputData = this.getFormData(this.inputData);
     const selectData = this.getFormData(this.selectData);
 
-    return { ...inputData, ...selectData };
+    await this.$axios
+      .post(`http://localhost:3000/api/${this.$props.config.postApi}`, {
+        ...inputData,
+        ...selectData,
+      })
+      .then((res: AxiosResponse) => {
+        this.messages = res.data.success;
+
+        setTimeout(() => {
+          this.$router.push('/');
+        }, 3000);
+      })
+      .catch((err: AxiosError) => {
+        this.messages = err.response?.data.errors;
+      });
   }
 
   created() {
