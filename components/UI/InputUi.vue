@@ -29,7 +29,7 @@ export interface InputConfig {
     control?: string;
     placeholder?: string;
     type?: string;
-    value: string;
+    value: string | number;
   };
 }
 
