@@ -3,9 +3,7 @@
     <div class="container">
       <h1>{{ header }}</h1>
 
-      <section>
-        <Form :config="formConfiguration" formName="Add new product" />
-      </section>
+      <Form :config="formConfiguration" formName="Add new product" />
     </div>
   </main>
 </template>
@@ -66,13 +64,13 @@ export default class Product extends Vue {
                 placeholder: 'product description',
               },
               price: {
-                value: '',
-                placeholder: '0',
+                value: 0,
+                placeholder: 'number',
                 type: 'number',
               },
               stockOuantity: {
-                value: '',
-                placeholder: '0',
+                value: 0,
+                placeholder: 'number',
                 type: 'number',
               },
             },
