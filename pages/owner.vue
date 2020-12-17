@@ -4,12 +4,12 @@
       <h1>{{ header }}</h1>
 
       <Form
-        @emit-data="categories.push($event.category)"
+        @emit-data="owners.push($event.owner)"
         :config="formConfiguration"
-        formName="Add new category"
+        formName="Add new owner"
       />
 
-      <List :list="categories" />
+      <List :list="owners" />
     </div>
   </main>
 </template>
@@ -19,30 +19,38 @@ import { Component, Vue } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
 import { FormConfig } from '@/components/Form.vue';
 import { AxiosResponse, AxiosPromise, AxiosError } from 'axios';
+import List from '@/components/List.vue';
 
 @Component
-export default class Category extends Vue {
-  header: string = 'Category page';
+export default class Owner extends Vue {
+  header: string = 'Owner page';
   messages: { message: string }[] = [];
 
   formConfiguration: FormConfig = {
-    postApi: 'categories/category',
+    postApi: 'owners/owner',
+    dropzone: true,
     inputs: {
-      category: {
-        name: 'Create a new caterory',
+      name: {
+        name: 'Create a new owner name',
         value: '',
-        placeholder: 'place a category',
+        placeholder: 'place a owner name',
+      },
+      about: {
+        name: 'Describe a new owner',
+        value: '',
+        control: 'textarea',
+        placeholder: 'place describe',
       },
     },
   };
 
   asyncData({ $axios, error }: Context) {
     return $axios
-      .get(`http://localhost:3000/api/categories`)
+      .get(`http://localhost:3000/api/owners`)
       .then((res) => {
-        const { categories } = res.data;
+        const { owners } = res.data;
         return {
-          categories,
+          owners,
         };
       })
       .catch((err) => {
