@@ -5,7 +5,7 @@
       <option
         class="select__item"
         v-for="(option, index) in config.options"
-        :selected="option.selected === option.value"
+        :selected="option.selected"
         :value="option.value"
         :key="index"
       >
