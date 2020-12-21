@@ -17,16 +17,25 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
+import { AxiosResponse, AxiosError } from 'axios';
+
 import { FormConfig } from '@/components/Form.vue';
-import { AxiosResponse, AxiosPromise, AxiosError } from 'axios';
 import List from '@/components/List.vue';
 
-@Component
-export default class Owner extends Vue {
-  header: string = 'Owner page';
-  messages: { message: string }[] = [];
+interface Owner {
+  header: string;
+  messages: { message: string }[];
+  formConfiguration: FormConfig;
 
-  formConfiguration: FormConfig = {
+  asyncData({ $axios, error }: Context): Promise<void | { owners: Owner[] }>;
+}
+
+@Component
+export default class OwnersPage extends Vue implements Owner {
+  header = 'Owner page';
+  messages = [];
+
+  formConfiguration = {
     postApi: 'owners/owner',
     dropzone: true,
     inputs: {
@@ -47,13 +56,13 @@ export default class Owner extends Vue {
   asyncData({ $axios, error }: Context) {
     return $axios
       .get(`http://localhost:3000/api/owners`)
-      .then((res) => {
+      .then((res: AxiosResponse) => {
         const { owners } = res.data;
         return {
           owners,
         };
       })
-      .catch((err) => {
+      .catch((err: AxiosError) => {
         error({
           statusCode: 404,
           message: `No items found - ${err.message}`,

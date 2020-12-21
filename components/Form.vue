@@ -43,7 +43,7 @@ import { InputConfig } from '@/components/UI/InputUi.vue';
 import { SelectConfig } from '@/components/UI/SelectUi.vue';
 
 export interface FormConfig {
-  dropzone?: boolean;
+  dropzone: boolean;
   postApi: string;
   inputs: InputConfig;
   selects?: SelectConfig;

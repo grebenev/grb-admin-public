@@ -17,15 +17,34 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
+import { AxiosResponse, AxiosError } from 'axios';
+
 import { FormConfig } from '@/components/Form.vue';
-import { AxiosResponse, AxiosPromise, AxiosError } from 'axios';
+import { types } from 'node-sass';
+
+type Category = {
+  _id: string;
+  name: string;
+};
+
+interface Categories {
+  header: string;
+  messages: { message: string }[];
+  formConfiguration: FormConfig;
+
+  asyncData({
+    $axios,
+    error,
+  }: Context): Promise<void | { categories: Category[] }>;
+}
 
 @Component
-export default class Category extends Vue {
-  header: string = 'Category page';
-  messages: { message: string }[] = [];
+export default class CategoriesPage extends Vue implements Categories {
+  header = 'Category page';
+  messages = [];
 
-  formConfiguration: FormConfig = {
+  formConfiguration = {
+    dropzone: false,
     postApi: 'categories/category',
     inputs: {
       category: {
@@ -39,13 +58,13 @@ export default class Category extends Vue {
   asyncData({ $axios, error }: Context) {
     return $axios
       .get(`http://localhost:3000/api/categories`)
-      .then((res) => {
+      .then((res: AxiosResponse) => {
         const { categories } = res.data;
         return {
           categories,
         };
       })
-      .catch((err) => {
+      .catch((err: AxiosError) => {
         error({
           statusCode: 404,
           message: `No items found - ${err.message}`,

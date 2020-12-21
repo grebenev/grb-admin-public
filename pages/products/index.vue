@@ -9,22 +9,31 @@
 </template>
 
 <script lang="ts">
-import { FormConfig } from '@/components/Form.vue';
-
 import { Component, Vue } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
+import { AxiosResponse, AxiosError } from 'axios';
+
+import { FormConfig } from '@/components/Form.vue';
 import { formatOptions } from '@/plugins/formatOptions';
 
+interface Procuct {
+  header: string;
+  asyncData({
+    $axios,
+    error,
+  }: Context): Promise<void | { formConfiguration: FormConfig }>;
+}
+
 @Component
-export default class Product extends Vue {
-  header: string = 'Product page';
+export default class ProcuctPage extends Vue implements Procuct {
+  header = 'Product page';
 
   asyncData({ $axios, error }: Context) {
     return Promise.all([
       $axios.get(`http://localhost:3000/api/categories`),
       $axios.get(`http://localhost:3000/api/owners`),
     ])
-      .then(([categoriesRes, ownersRes]) => {
+      .then(([categoriesRes, ownersRes]: AxiosResponse[]) => {
         const { categories } = categoriesRes.data;
         const { owners } = ownersRes.data;
 
@@ -76,7 +85,7 @@ export default class Product extends Vue {
           } as FormConfig,
         };
       })
-      .catch((err) => {
+      .catch((err: AxiosError) => {
         error({
           statusCode: 404,
           message: `No items found - ${err.message}`,

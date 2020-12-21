@@ -19,31 +19,44 @@
 </template>
 
 <script lang="ts">
-import { Context } from '@nuxt/types';
-//import { NuxtAxiosInstance } from '@nuxtjs/axios';
-import ButtonUi from '@/components/UI/ButtonUi.vue';
-import Card from '@/components/Card.vue';
 import { Component, Vue } from 'nuxt-property-decorator';
+import { Context } from '@nuxt/types';
+import { AxiosResponse, AxiosError } from 'axios';
 
-@Component({
-  components: {
-    ButtonUi,
-    Card,
-  },
-})
-export default class Index extends Vue {
+type Product = {
+  _id: string;
+  rating: [];
+  title: string;
+  description: string;
+  photos: {};
+  price: number;
+  stockQuantity: number;
+  category: string;
+  owner: string;
+};
+
+interface Index {
+  header: string;
+  asyncData({
+    $axios,
+    error,
+  }: Context): Promise<void | { products: Product[] }>;
+}
+
+@Component
+export default class IndexPage extends Vue implements Index {
   header: string = 'All products';
 
   asyncData({ $axios, error }: Context) {
     return $axios
       .get(`http://localhost:3000/api/products`)
-      .then((res) => {
+      .then((res: AxiosResponse) => {
         const { products } = res.data;
         return {
           products,
         };
       })
-      .catch((err) => {
+      .catch((err: AxiosError) => {
         error({
           statusCode: 404,
           message: `No items found - ${err.message}`,

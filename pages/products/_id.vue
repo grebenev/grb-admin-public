@@ -11,29 +11,36 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
+import { AxiosResponse, AxiosError } from 'axios';
+
 import { FormConfig } from '@/components/Form.vue';
 import { formatOptions } from '@/plugins/formatOptions';
 
+interface Procuct {
+  header: string;
+  asyncData({
+    $axios,
+    error,
+  }: Context): Promise<void | {
+    formConfiguration: FormConfig;
+  }>;
+}
+
 @Component
-export default class ProductEdit extends Vue {
-  header: string = 'Product edit page';
+export default class ProductEditPage extends Vue implements Procuct {
+  header = 'Product edit page';
 
   asyncData({ $axios, params }: Context) {
     return Promise.all([
       $axios.get(`http://localhost:3000/api/categories`),
       $axios.get(`http://localhost:3000/api/owners`),
       $axios.get(`http://localhost:3000/api/products/${params.id}`),
-    ]).then(([...args]) => {
+    ]).then(([...args]: AxiosResponse[]) => {
       const { categories } = args[0].data;
       const { owners } = args[1].data;
       const { product } = args[2].data;
 
       return {
-        // categories,
-        // owners,
-        // product,
-
-        // -- Form Config
         formConfiguration: {
           dropzone: true,
           postApi: 'products/product',
