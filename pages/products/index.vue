@@ -16,7 +16,7 @@ import { AxiosResponse, AxiosError } from 'axios';
 import { FormConfig } from '@/components/Form.vue';
 import { formatOptions } from '@/plugins/formatOptions';
 
-interface Procuct {
+interface Product {
   header: string;
   asyncData({
     $axios,
@@ -25,7 +25,7 @@ interface Procuct {
 }
 
 @Component
-export default class ProcuctPage extends Vue implements Procuct {
+export default class ProcuctPage extends Vue implements Product {
   header = 'Product page';
 
   asyncData({ $axios, error }: Context) {

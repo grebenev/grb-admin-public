@@ -16,18 +16,16 @@ import { AxiosResponse, AxiosError } from 'axios';
 import { FormConfig } from '@/components/Form.vue';
 import { formatOptions } from '@/plugins/formatOptions';
 
-interface Procuct {
+interface Product {
   header: string;
   asyncData({
     $axios,
     error,
-  }: Context): Promise<void | {
-    formConfiguration: FormConfig;
-  }>;
+  }: Context): Promise<void | { formConfiguration: FormConfig }>;
 }
 
 @Component
-export default class ProductEditPage extends Vue implements Procuct {
+export default class ProductEditPage extends Vue implements Product {
   header = 'Product edit page';
 
   asyncData({ $axios, params }: Context) {
