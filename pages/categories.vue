@@ -45,7 +45,8 @@ export default class CategoriesPage extends Vue implements Categories {
 
   formConfiguration = {
     dropzone: false,
-    postApi: 'categories/category',
+    api: 'categories/category',
+
     inputs: {
       category: {
         name: 'Create a new caterory',

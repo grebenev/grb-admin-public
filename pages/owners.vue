@@ -36,7 +36,7 @@ export default class OwnersPage extends Vue implements Owner {
   messages = [];
 
   formConfiguration = {
-    postApi: 'owners/owner',
+    api: 'owners/owner',
     dropzone: true,
     inputs: {
       name: {

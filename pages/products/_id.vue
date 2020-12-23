@@ -41,28 +41,29 @@ export default class ProductEditPage extends Vue implements Product {
       return {
         formConfiguration: {
           dropzone: true,
-          postApi: 'products/product',
+          api: 'products',
+          id: params.id,
 
           // inputs props
           inputs: {
             title: {
               name: 'Заголовок',
-              value: '',
-              placeholder: product.title,
+              value: product.title,
+              // placeholder: product.title,
             },
             description: {
-              value: '',
+              value: product.description,
               control: 'textarea',
-              placeholder: product.description,
+              // placeholder: product.description,
             },
             price: {
-              value: '',
+              value: product.price,
               placeholder: product.price,
               type: 'number',
             },
             stockOuantity: {
-              value: '',
-              placeholder: product.stockOuantity,
+              value: product.stockOuantity,
+              // placeholder: product.stockOuantity,
               type: 'number',
             },
           },
@@ -73,14 +74,14 @@ export default class ProductEditPage extends Vue implements Product {
                 { name: 'Choose one owner', value: '' },
                 ...formatOptions(owners, product.owner),
               ],
-              value: '',
+              value: product.owner,
             },
             category: {
               options: [
                 { name: 'Choose one category', value: '' },
                 ...formatOptions(categories, product.category),
               ],
-              value: '',
+              value: product.category,
             },
           },
         } as FormConfig,
