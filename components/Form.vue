@@ -42,29 +42,41 @@ import { AxiosResponse, AxiosPromise, AxiosError } from 'axios';
 import { InputConfig } from '@/components/UI/InputUi.vue';
 import { SelectConfig } from '@/components/UI/SelectUi.vue';
 
-export interface FormConfig {
-  dropzone: boolean;
-  postApi: string;
-  inputs: InputConfig;
-  selects?: SelectConfig;
-}
-
 interface EmittedData {
   [key: string]: string | number;
 }
 
+export interface FormConfig {
+  dropzone: boolean;
+  api: string;
+  id?: string;
+  inputs: InputConfig;
+  selects?: SelectConfig;
+}
+
+interface FormComponent {
+  inputData: InputConfig;
+  selectData: SelectConfig;
+  messages: { message: string }[];
+
+  getFormData(expData: InputConfig | SelectConfig): EmittedData;
+  emitData(data: AxiosResponse): AxiosResponse;
+  clearForm(inputs: InputConfig): void;
+  onSubmit(): Promise<void | AxiosPromise>;
+  onRequest(data: any): AxiosPromise;
+}
+
 @Component
-export default class Form extends Vue {
+export default class Form extends Vue implements FormComponent {
   @Prop({ type: Object })
   readonly config!: FormConfig;
 
   @Prop({ type: String, default: 'Форма' })
   formName!: string;
 
-  inputData: InputConfig = {};
-  selectData: SelectConfig = {};
-
-  messages: { message: string }[] = [];
+  inputData = {};
+  selectData = {};
+  messages = [];
 
   getFormData(expData: InputConfig | SelectConfig): EmittedData {
     let data: EmittedData = {};
@@ -76,7 +88,7 @@ export default class Form extends Vue {
   }
 
   @Emit()
-  emitData(data: {}): {} {
+  emitData(data: AxiosResponse): AxiosResponse {
     return data;
   }
 
@@ -90,28 +102,36 @@ export default class Form extends Vue {
     }
   }
 
-  async onSubmit(): Promise<void> {
+  onRequest(): AxiosPromise {
     const inputData = this.getFormData(this.inputData);
     const selectData = this.getFormData(this.selectData);
+    const { api, id } = this.$props.config;
 
-    await this.$axios
-      .post(`http://localhost:3000/api/${this.$props.config.postApi}`, {
-        ...inputData,
-        ...selectData,
-      })
+    let result = !id
+      ? this.$axios.post(`http://localhost:3000/api/${api}`, {
+          ...inputData,
+          ...selectData,
+        })
+      : this.$axios.put(`http://localhost:3000/api/${api}/${id}`, {
+          ...inputData,
+          ...selectData,
+        });
+
+    return result;
+  }
+
+  async onSubmit(): Promise<void | AxiosPromise> {
+    await this.onRequest()
       .then((res: AxiosResponse) => {
         this.messages = res.data.success;
-
-        // setTimeout(() => {
-        //   this.$router.push('/');
-        // }, 3000);
+        //  this.$router.push('/');
 
         this.emitData(res.data); // emmit response object to parent
 
         this.clearForm(this.inputData);
       })
       .catch((err: AxiosError) => {
-        this.messages = err.response?.data.errors;
+        this.messages = err.response ? err.response.data.errors : [];
       });
   }
 
