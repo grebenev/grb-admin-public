@@ -25,7 +25,7 @@ interface Product {
 }
 
 @Component
-export default class ProcuctPage extends Vue implements Product {
+export default class ProductPage extends Vue implements Product {
   header = 'Product page';
 
   asyncData({ $axios, error }: Context) {
@@ -40,7 +40,7 @@ export default class ProcuctPage extends Vue implements Product {
         return {
           formConfiguration: {
             dropzone: true,
-            postApi: 'products/product',
+            api: 'products/product',
 
             // inputs props
             inputs: {
@@ -55,12 +55,12 @@ export default class ProcuctPage extends Vue implements Product {
                 placeholder: 'product description',
               },
               price: {
-                value: 0,
+                value: '',
                 placeholder: 'number',
                 type: 'number',
               },
               stockOuantity: {
-                value: 0,
+                value: '',
                 placeholder: 'number',
                 type: 'number',
               },
