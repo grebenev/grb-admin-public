@@ -8,6 +8,7 @@
         :config="formConfiguration"
         formName="Add new owner"
       />
+      <Dropzone />
 
       <List :list="owners" />
     </div>
@@ -19,8 +20,9 @@ import { Component, Vue } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
 import { AxiosResponse, AxiosError } from 'axios';
 
-import { FormConfig } from '@/components/Form.vue';
+import Form, { FormConfig } from '@/components/Form.vue';
 import List from '@/components/List.vue';
+import Dropzone from '@/components/Dropzone.vue';
 
 interface Owner {
   header: string;
@@ -30,14 +32,20 @@ interface Owner {
   asyncData({ $axios, error }: Context): Promise<void | { owners: Owner[] }>;
 }
 
-@Component
+@Component({
+  components: {
+    Form,
+    List,
+    Dropzone,
+  },
+})
 export default class OwnersPage extends Vue implements Owner {
-  header = 'Owner page';
-  messages = [];
+  header: string = 'Owner page';
+  messages: { message: string }[] = [];
 
-  formConfiguration = {
+  formConfiguration: FormConfig = {
     api: 'owners/owner',
-    dropzone: true,
+
     inputs: {
       name: {
         name: 'Create a new owner name',

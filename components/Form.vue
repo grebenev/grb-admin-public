@@ -21,10 +21,6 @@
         </InputUi>
       </div>
 
-      <div v-if="config.dropzone">
-        <Dropzone />
-      </div>
-
       <div v-if="messages">
         <div v-for="(message, index) in messages" :key="index">
           MESSAGE: {{ message.message }}
@@ -47,7 +43,6 @@ interface EmittedData {
 }
 
 export interface FormConfig {
-  dropzone: boolean;
   api: string;
   id?: string;
   inputs: InputConfig;

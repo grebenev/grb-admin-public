@@ -4,6 +4,7 @@
       <h1>{{ header }}</h1>
 
       <Form :config="formConfiguration" formName="Edit product" />
+      <Dropzone :fetchedPhotos="product.photos" />
     </div>
   </main>
 </template>
@@ -13,20 +14,41 @@ import { Component, Vue } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
 import { AxiosResponse, AxiosError } from 'axios';
 
-import { FormConfig } from '@/components/Form.vue';
+import Form, { FormConfig } from '@/components/Form.vue';
+import Dropzone from '@/components/Dropzone.vue';
 import { formatOptions } from '@/plugins/formatOptions';
 
 interface Product {
+  _id: string;
+  rating: [];
+  title: string;
+  description: string;
+  photos: { [key: number]: { id: number; photo: string } };
+  price: number;
+  stockQuantity: number;
+  category: string;
+  owner: string;
+}
+
+interface ProductEdit {
   header: string;
   asyncData({
     $axios,
     error,
-  }: Context): Promise<void | { formConfiguration: FormConfig }>;
+  }: Context): Promise<void | {
+    product: Product;
+    formConfiguration: FormConfig;
+  }>;
 }
 
-@Component
-export default class ProductEditPage extends Vue implements Product {
-  header = 'Product edit page';
+@Component({
+  components: {
+    Form,
+    Dropzone,
+  },
+})
+export default class ProductEditPage extends Vue implements ProductEdit {
+  header: string = 'Product edit page';
 
   asyncData({ $axios, params }: Context) {
     return Promise.all([
@@ -39,8 +61,8 @@ export default class ProductEditPage extends Vue implements Product {
       const { product } = args[2].data;
 
       return {
+        product: product as Product,
         formConfiguration: {
-          dropzone: true,
           api: 'products',
           id: params.id,
 
@@ -49,12 +71,10 @@ export default class ProductEditPage extends Vue implements Product {
             title: {
               name: 'Заголовок',
               value: product.title,
-              // placeholder: product.title,
             },
             description: {
               value: product.description,
               control: 'textarea',
-              // placeholder: product.description,
             },
             price: {
               value: product.price,
@@ -63,7 +83,6 @@ export default class ProductEditPage extends Vue implements Product {
             },
             stockOuantity: {
               value: product.stockOuantity,
-              // placeholder: product.stockOuantity,
               type: 'number',
             },
           },

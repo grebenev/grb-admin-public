@@ -3,9 +3,9 @@
     <div class="container">
       <h1>{{ header }}</h1>
 
-      <section>
+      <!-- <section>
         <ButtonUi>Add new product</ButtonUi>
-      </section>
+      </section> -->
 
       <section>
         <Card
@@ -23,7 +23,9 @@ import { Component, Vue } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
 import { AxiosResponse, AxiosError } from 'axios';
 
-type Product = {
+import Card from '@/components/Card.vue';
+
+interface Product {
   _id: string;
   rating: [];
   title: string;
@@ -33,7 +35,7 @@ type Product = {
   stockQuantity: number;
   category: string;
   owner: string;
-};
+}
 
 interface Index {
   header: string;
@@ -43,7 +45,11 @@ interface Index {
   }: Context): Promise<void | { products: Product[] }>;
 }
 
-@Component
+@Component({
+  components: {
+    Card,
+  },
+})
 export default class IndexPage extends Vue implements Index {
   header: string = 'All products';
 

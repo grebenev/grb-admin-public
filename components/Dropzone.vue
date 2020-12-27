@@ -1,9 +1,14 @@
 <template>
   <div class="dropzone">
     <!-- listing photos -->
-    <ul class="dropzone__list" v-if="getPhotos.length > 0">
-      <li class="dropzone__item" v-for="photo in getPhotos" :key="photo">
-        <ImageUi :photo="photo" :config="imageConfig" />
+
+    <ul class="dropzone__list">
+      <li
+        class="dropzone__item"
+        v-for="(photo, propretyName) in uploadedPhotos"
+        :key="propretyName"
+      >
+        <ImageUi :photo="photo.photo" :config="imageConfig" />
       </li>
     </ul>
 
@@ -14,14 +19,34 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Ref } from 'nuxt-property-decorator';
+import { AxiosResponse, AxiosError } from 'axios';
 import { ImageConfig } from '@/components/UI/ImageUi.vue';
+import { Photo } from '@/plugins/interfaces';
+
+interface DropzoneComponent {
+  progress: number;
+  uploadedPhotos: Photo;
+  imageConfig: ImageConfig;
+  messages: string[];
+
+  sendFile(): void;
+}
+
+interface AxiosCustomResponse extends AxiosResponse {
+  photo: Photo;
+  success: { message: string }[];
+}
 
 @Component
-export default class Dropzone extends Vue {
+export default class Dropzone extends Vue implements DropzoneComponent {
   @Ref() readonly drop!: HTMLFormElement;
 
+  @Prop({ type: Object })
+  readonly fetchedPhotos!: Photo;
+
   progress: number = 0;
-  uploadedFiles: string[] = [];
+  uploadedPhotos: Photo = {};
+  messages: string[] = [];
 
   imageConfig: ImageConfig = {
     desktop: { w: 200, h: 200 },
@@ -29,7 +54,7 @@ export default class Dropzone extends Vue {
     mobile: { w: 50, h: 50 },
   };
 
-  async sendFile() {
+  async sendFile(): Promise<void> {
     const file: File = (this.$refs.drop as HTMLFormElement).files[0];
 
     const allowedType: string[] = [
@@ -60,23 +85,27 @@ export default class Dropzone extends Vue {
           onUploadProgress: (event: ProgressEvent): number =>
             (this.progress = Math.round((event.loaded * 100) / event.total)),
         })
-        .then((res) => {
-          console.log('Success uploaded: ', ...res.success);
-          this.uploadedFiles = [...this.uploadedFiles, res.file];
+        .then((res: AxiosCustomResponse) => {
+          console.log('Success uploaded: ', res.success[0].message);
+
+          this.uploadedPhotos = { ...this.uploadedPhotos, ...res.photo };
+
+          console.log('ответ res ', res.photo);
 
           this.progress = 0;
           (this.$refs.drop as HTMLFormElement).value = '';
         })
-        .catch((err) => {
+        .catch((err: AxiosError) => {
           console.log('Something wrong with uploading: ', err);
         });
     } catch (err) {
       console.log('not available: ', err);
     }
   }
-
-  get getPhotos() {
-    return this.uploadedFiles;
+  created() {
+    if (this.$props.fetchedPhotos) {
+      this.uploadedPhotos = this.$props.fetchedPhotos;
+    }
   }
 }
 </script>

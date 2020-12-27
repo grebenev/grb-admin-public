@@ -4,6 +4,8 @@
       <h1>{{ header }}</h1>
 
       <Form :config="formConfiguration" formName="Add new product" />
+
+      <Dropzone />
     </div>
   </main>
 </template>
@@ -13,7 +15,8 @@ import { Component, Vue } from 'nuxt-property-decorator';
 import { Context } from '@nuxt/types';
 import { AxiosResponse, AxiosError } from 'axios';
 
-import { FormConfig } from '@/components/Form.vue';
+import Form, { FormConfig } from '@/components/Form.vue';
+import Dropzone from '@/components/Dropzone.vue';
 import { formatOptions } from '@/plugins/formatOptions';
 
 interface Product {
@@ -24,9 +27,14 @@ interface Product {
   }: Context): Promise<void | { formConfiguration: FormConfig }>;
 }
 
-@Component
+@Component({
+  components: {
+    Form,
+    Dropzone,
+  },
+})
 export default class ProductPage extends Vue implements Product {
-  header = 'Product page';
+  header: string = 'Product page';
 
   asyncData({ $axios, error }: Context) {
     return Promise.all([
@@ -39,9 +47,7 @@ export default class ProductPage extends Vue implements Product {
 
         return {
           formConfiguration: {
-            dropzone: true,
             api: 'products/product',
-
             // inputs props
             inputs: {
               title: {
