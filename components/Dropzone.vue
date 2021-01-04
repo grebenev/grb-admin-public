@@ -1,16 +1,25 @@
 <template>
   <div class="dropzone">
     <!-- listing photos -->
-
+    <!-- {{ uploadedPhotos }} -->
     <ul class="dropzone__list">
       <li
         class="dropzone__item"
-        v-for="(photo, propretyName) in uploadedPhotos"
-        :key="propretyName"
+        v-for="photo in uploadedPhotos"
+        :key="photo.id"
       >
-        <ImageUi :photo="photo.photo" :config="imageConfig" />
+        <div v-if="!photo.deleted">
+          <ImageUi :photo="photo.photo" :config="imageConfig" /> {{ photo.id }}
+
+          <ButtonUi @click="deleteFile(photo.id)"> Delete</ButtonUi>
+        </div>
       </li>
     </ul>
+    <div v-if="messages">
+      <div v-for="(message, index) in messages" :key="index">
+        MESSAGE: {{ message.message }}
+      </div>
+    </div>
 
     <input class="dropzone__input" type="file" @change="sendFile" ref="drop" />
     <progress class="dropzone__bar" :value="progress" max="100"></progress>
@@ -20,16 +29,18 @@
 <script lang="ts">
 import { Component, Vue, Prop, Ref } from 'nuxt-property-decorator';
 import { AxiosResponse, AxiosError } from 'axios';
-import { ImageConfig } from '@/components/UI/ImageUi.vue';
+import ImageUi, { ImageConfig } from '@/components/UI/ImageUi.vue';
+import ButtonUi from '@/components/UI/ButtonUi.vue';
 import { Photo } from '@/plugins/interfaces';
 
 interface DropzoneComponent {
   progress: number;
-  uploadedPhotos: Photo;
+  uploadedPhotos: Photo[];
   imageConfig: ImageConfig;
-  messages: string[];
+  messages: { message: string }[];
 
   sendFile(): void;
+  deleteFile(id: number): Promise<void>;
 }
 
 interface AxiosCustomResponse extends AxiosResponse {
@@ -37,16 +48,24 @@ interface AxiosCustomResponse extends AxiosResponse {
   success: { message: string }[];
 }
 
-@Component
+@Component({
+  components: {
+    ImageUi,
+    ButtonUi,
+  },
+})
 export default class Dropzone extends Vue implements DropzoneComponent {
   @Ref() readonly drop!: HTMLFormElement;
 
-  @Prop({ type: Object })
-  readonly fetchedPhotos!: Photo;
+  @Prop({ type: Array })
+  readonly fetchedPhotos!: Photo[];
+
+  @Prop({ type: String })
+  readonly ProductId!: string;
 
   progress: number = 0;
-  uploadedPhotos: Photo = {};
-  messages: string[] = [];
+  uploadedPhotos: Photo[] = [];
+  messages: { message: string }[] = [];
 
   imageConfig: ImageConfig = {
     desktop: { w: 200, h: 200 },
@@ -68,11 +87,11 @@ export default class Dropzone extends Vue implements DropzoneComponent {
     const tooLarge: boolean = file.size > maxSize;
 
     if (!allowedType.includes(file.type)) {
-      console.log('non allowed type ');
+      this.messages = [{ message: 'Non allowed file type!' }];
       return;
     }
     if (tooLarge) {
-      console.log(' too lagre');
+      this.messages = [{ message: 'File too large!' }];
       return;
     }
 
@@ -86,22 +105,43 @@ export default class Dropzone extends Vue implements DropzoneComponent {
             (this.progress = Math.round((event.loaded * 100) / event.total)),
         })
         .then((res: AxiosCustomResponse) => {
-          console.log('Success uploaded: ', res.success[0].message);
+          this.messages = res.success;
 
-          this.uploadedPhotos = { ...this.uploadedPhotos, ...res.photo };
-
-          console.log('ответ res ', res.photo);
+          this.uploadedPhotos.push(res.photo);
 
           this.progress = 0;
           (this.$refs.drop as HTMLFormElement).value = '';
         })
         .catch((err: AxiosError) => {
-          console.log('Something wrong with uploading: ', err);
+          this.messages = err.response ? err.response.data.errors : [];
         });
     } catch (err) {
-      console.log('not available: ', err);
+      console.log(err);
     }
   }
+
+  async deleteFile(id: number): Promise<void> {
+    const result = this.uploadedPhotos.filter((photo) => {
+      return photo.id != id;
+    });
+
+    this.uploadedPhotos = result;
+
+    if (!this.$props.ProductId) return;
+
+    this.$axios
+      .put(
+        `http://localhost:3000/api/products/photo/${this.$props.ProductId}`,
+        { photoid: id }
+      )
+      .then((res: AxiosResponse) => {
+        this.messages = res.data.success;
+      })
+      .catch((err: AxiosError) => {
+        this.messages = err.response ? err.response.data.errors : [];
+      });
+  }
+
   created() {
     if (this.$props.fetchedPhotos) {
       this.uploadedPhotos = this.$props.fetchedPhotos;

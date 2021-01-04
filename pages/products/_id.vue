@@ -4,7 +4,7 @@
       <h1>{{ header }}</h1>
 
       <Form :config="formConfiguration" formName="Edit product" />
-      <Dropzone :fetchedPhotos="product.photos" />
+      <Dropzone :fetchedPhotos="product.photos" :ProductId="product._id" />
     </div>
   </main>
 </template>

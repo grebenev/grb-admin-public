@@ -69,9 +69,9 @@ export default class Form extends Vue implements FormComponent {
   @Prop({ type: String, default: 'Форма' })
   formName!: string;
 
-  inputData = {};
-  selectData = {};
-  messages = [];
+  inputData: InputConfig = {};
+  selectData: SelectConfig = {};
+  messages: { message: string }[] = [];
 
   getFormData(expData: InputConfig | SelectConfig): EmittedData {
     let data: EmittedData = {};
