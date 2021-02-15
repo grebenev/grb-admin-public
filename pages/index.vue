@@ -3,9 +3,11 @@
     <div class="container">
       <h1>{{ header }}</h1>
 
-      <!-- <section>
-        <ButtonUi>Add new product</ButtonUi>
-      </section> -->
+      <section>
+        <ButtonUi type="button" @click="$router.push(`products/`)"
+          >Add new product</ButtonUi
+        >
+      </section>
 
       <section>
         <Card
