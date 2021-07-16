@@ -48,8 +48,10 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
-import { ImageConfig } from '@/components/UI/ImageUi.vue';
 import { AxiosResponse, AxiosError } from 'axios';
+
+import ImageUi, { ImageConfig } from '@/components/UI/ImageUi.vue';
+import ButtonUi from '@/components/UI/ButtonUi.vue';
 
 interface CardConfig {
   _id: string;
@@ -62,7 +64,12 @@ interface CardConfig {
   deleted?: boolean;
 }
 
-@Component
+@Component({
+  components: {
+    ImageUi,
+    ButtonUi
+  }
+})
 export default class Card extends Vue {
   @Prop({ type: Object, required: true })
   readonly product!: CardConfig;
@@ -72,7 +79,7 @@ export default class Card extends Vue {
   imageConfig: ImageConfig = {
     desktop: { w: 300, h: 300 },
     tablet: { w: 100, h: 100 },
-    mobile: { w: 50, h: 50 },
+    mobile: { w: 50, h: 50 }
   };
 
   get getProduct() {
@@ -81,7 +88,7 @@ export default class Card extends Vue {
 
   async deleteProduct(id: string): Promise<void> {
     await this.$axios
-      .put(`http://localhost:3000/api/products/delete/${id}`)
+      .put(`${process.env.baseUrl}/api/products/delete/${id}`)
       .then((res: AxiosResponse) => {
         this.messages = res.data.success;
       })

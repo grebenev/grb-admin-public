@@ -51,8 +51,8 @@ interface AxiosCustomResponse extends AxiosResponse {
 @Component({
   components: {
     ImageUi,
-    ButtonUi,
-  },
+    ButtonUi
+  }
 })
 export default class Dropzone extends Vue implements DropzoneComponent {
   @Ref() readonly drop!: HTMLFormElement;
@@ -70,7 +70,7 @@ export default class Dropzone extends Vue implements DropzoneComponent {
   imageConfig: ImageConfig = {
     desktop: { w: 200, h: 200 },
     tablet: { w: 100, h: 100 },
-    mobile: { w: 50, h: 50 },
+    mobile: { w: 50, h: 50 }
   };
 
   async sendFile(): Promise<void> {
@@ -81,7 +81,7 @@ export default class Dropzone extends Vue implements DropzoneComponent {
       'image/webp',
       'image/png',
       'image/gif',
-      'image/svg+xml',
+      'image/svg+xml'
     ];
     const maxSize: number = 1000000;
     const tooLarge: boolean = file.size > maxSize;
@@ -100,9 +100,9 @@ export default class Dropzone extends Vue implements DropzoneComponent {
 
     try {
       await this.$axios
-        .$post('http://localhost:3000/api/products/upload', formData, {
+        .$post(`${process.env.baseUrl}/api/products/upload`, formData, {
           onUploadProgress: (event: ProgressEvent): number =>
-            (this.progress = Math.round((event.loaded * 100) / event.total)),
+            (this.progress = Math.round((event.loaded * 100) / event.total))
         })
         .then((res: AxiosCustomResponse) => {
           this.messages = res.success;
@@ -121,7 +121,7 @@ export default class Dropzone extends Vue implements DropzoneComponent {
   }
 
   async deleteFile(id: number): Promise<void> {
-    const result = this.uploadedPhotos.filter((photo) => {
+    const result = this.uploadedPhotos.filter(photo => {
       return photo.id != id;
     });
 
@@ -131,7 +131,7 @@ export default class Dropzone extends Vue implements DropzoneComponent {
 
     this.$axios
       .put(
-        `http://localhost:3000/api/products/photo/${this.$props.ProductId}`,
+        `${process.env.baseUrl}/api/products/photo/${this.$props.ProductId}`,
         { photoid: id }
       )
       .then((res: AxiosResponse) => {

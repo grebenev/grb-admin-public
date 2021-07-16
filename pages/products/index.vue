@@ -23,23 +23,23 @@ interface Product {
   header: string;
   asyncData({
     $axios,
-    error,
+    error
   }: Context): Promise<void | { formConfiguration: FormConfig }>;
 }
 
 @Component({
   components: {
     Form,
-    Dropzone,
-  },
+    Dropzone
+  }
 })
 export default class ProductPage extends Vue implements Product {
   header: string = 'Product page';
 
   asyncData({ $axios, error }: Context) {
     return Promise.all([
-      $axios.get(`http://localhost:3000/api/categories`),
-      $axios.get(`http://localhost:3000/api/owners`),
+      $axios.get(`${process.env.baseUrl}/api/categories`),
+      $axios.get(`${process.env.baseUrl}/api/owners`)
     ])
       .then(([categoriesRes, ownersRes]: AxiosResponse[]) => {
         const { categories } = categoriesRes.data;
@@ -53,48 +53,48 @@ export default class ProductPage extends Vue implements Product {
               title: {
                 name: 'Заголовок',
                 value: '',
-                placeholder: 'product title',
+                placeholder: 'product title'
               },
               description: {
                 value: '',
                 control: 'textarea',
-                placeholder: 'product description',
+                placeholder: 'product description'
               },
               price: {
                 value: '',
                 placeholder: 'number',
-                type: 'number',
+                type: 'number'
               },
               stockOuantity: {
                 value: '',
                 placeholder: 'number',
-                type: 'number',
-              },
+                type: 'number'
+              }
             },
             // selects props
             selects: {
               owner: {
                 options: [
                   { name: 'Choose one owner', value: '' },
-                  ...formatOptions(owners),
+                  ...formatOptions(owners)
                 ],
-                value: '',
+                value: ''
               },
               category: {
                 options: [
                   { name: 'Choose one category', value: '' },
-                  ...formatOptions(categories),
+                  ...formatOptions(categories)
                 ],
-                value: '',
-              },
-            },
-          } as FormConfig,
+                value: ''
+              }
+            }
+          } as FormConfig
         };
       })
       .catch((err: AxiosError) => {
         error({
           statusCode: 404,
-          message: `No items found - ${err.message}`,
+          message: `No items found - ${err.message}`
         });
       });
   }

@@ -34,7 +34,7 @@ interface ProductEdit {
   header: string;
   asyncData({
     $axios,
-    error,
+    error
   }: Context): Promise<void | {
     product: Product;
     formConfiguration: FormConfig;
@@ -44,17 +44,17 @@ interface ProductEdit {
 @Component({
   components: {
     Form,
-    Dropzone,
-  },
+    Dropzone
+  }
 })
 export default class ProductEditPage extends Vue implements ProductEdit {
   header: string = 'Product edit page';
 
   asyncData({ $axios, params }: Context) {
     return Promise.all([
-      $axios.get(`http://localhost:3000/api/categories`),
-      $axios.get(`http://localhost:3000/api/owners`),
-      $axios.get(`http://localhost:3000/api/products/${params.id}`),
+      $axios.get(`${process.env.baseUrl}/api/categories`),
+      $axios.get(`${process.env.baseUrl}/api/owners`),
+      $axios.get(`${process.env.baseUrl}/api/products/${params.id}`)
     ]).then(([...args]: AxiosResponse[]) => {
       const { categories } = args[0].data;
       const { owners } = args[1].data;
@@ -70,40 +70,40 @@ export default class ProductEditPage extends Vue implements ProductEdit {
           inputs: {
             title: {
               name: 'Заголовок',
-              value: product.title,
+              value: product.title
             },
             description: {
               value: product.description,
-              control: 'textarea',
+              control: 'textarea'
             },
             price: {
               value: product.price,
               placeholder: product.price,
-              type: 'number',
+              type: 'number'
             },
             stockOuantity: {
               value: product.stockOuantity,
-              type: 'number',
-            },
+              type: 'number'
+            }
           },
           // selects props
           selects: {
             owner: {
               options: [
                 { name: 'Choose one owner', value: '' },
-                ...formatOptions(owners, product.owner),
+                ...formatOptions(owners, product.owner)
               ],
-              value: product.owner,
+              value: product.owner
             },
             category: {
               options: [
                 { name: 'Choose one category', value: '' },
-                ...formatOptions(categories, product.category),
+                ...formatOptions(categories, product.category)
               ],
-              value: product.category,
-            },
-          },
-        } as FormConfig,
+              value: product.category
+            }
+          }
+        } as FormConfig
       };
     });
   }

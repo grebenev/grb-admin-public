@@ -35,8 +35,10 @@
 <script lang="ts">
 import { Component, Vue, Prop, Emit } from 'nuxt-property-decorator';
 import { AxiosResponse, AxiosPromise, AxiosError } from 'axios';
-import { InputConfig } from '@/components/UI/InputUi.vue';
-import { SelectConfig } from '@/components/UI/SelectUi.vue';
+
+import InputUi, { InputConfig } from '@/components/UI/InputUi.vue';
+import SelectUi, { SelectConfig } from '@/components/UI/SelectUi.vue';
+import ButtonUi from '@/components/UI/ButtonUi.vue';
 
 interface EmittedData {
   [key: string]: string | number;
@@ -61,7 +63,13 @@ interface FormComponent {
   onRequest(data: any): AxiosPromise;
 }
 
-@Component
+@Component({
+  components: {
+    InputUi,
+    SelectUi,
+    ButtonUi
+  }
+})
 export default class Form extends Vue implements FormComponent {
   @Prop({ type: Object })
   readonly config!: FormConfig;
@@ -103,13 +111,13 @@ export default class Form extends Vue implements FormComponent {
     const { api, id } = this.$props.config;
 
     let result = !id
-      ? this.$axios.post(`http://localhost:3000/api/${api}`, {
+      ? this.$axios.post(`${process.env.baseUrl}/api/${api}`, {
           ...inputData,
-          ...selectData,
+          ...selectData
         })
-      : this.$axios.put(`http://localhost:3000/api/${api}/${id}`, {
+      : this.$axios.put(`${process.env.baseUrl}/api/${api}/${id}`, {
           ...inputData,
-          ...selectData,
+          ...selectData
         });
 
     return result;

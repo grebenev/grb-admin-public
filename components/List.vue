@@ -17,9 +17,13 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
-import { ImageConfig } from '@/components/UI/ImageUi.vue';
+import ImageUi, { ImageConfig } from '@/components/UI/ImageUi.vue';
 
-@Component
+@Component({
+  components: {
+    ImageUi
+  }
+})
 export default class List extends Vue {
   @Prop({ type: Array })
   readonly list!: [];
@@ -27,7 +31,7 @@ export default class List extends Vue {
   imageConfig: ImageConfig = {
     desktop: { w: 300, h: 300 },
     tablet: { w: 100, h: 100 },
-    mobile: { w: 50, h: 50 },
+    mobile: { w: 50, h: 50 }
   };
 }
 </script>

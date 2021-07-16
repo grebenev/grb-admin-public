@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator';
+import { Component, Vue, Prop } from "nuxt-property-decorator";
 
 export interface ImageConfig {
   desktop: { w: number; h: number };
@@ -49,26 +49,25 @@ export default class ImageUi extends Vue {
   @Prop({ type: String, required: true })
   readonly photo!: string;
 
-  resizeApi: string = `${process.env.API_URL}/api/resize/`;
+  resizeApi: string = `${process.env.baseUrl}/api/resize/`;
 
   getUrl(...args: string[]): string {
     let photo: string, format: string;
 
-    if (!args[1] && typeof args[1] !== 'string') {
-      photo = 'noImage.jpeg';
+    if (!args[1] && typeof args[1] !== "string") {
+      photo = "noImage.jpeg";
     } else {
       photo = args[1];
     }
 
-    format = args[0] !== 'webp' ? args[1].split('.')[1] : 'webp';
+    format = args[0] !== "webp" ? args[1].split(".")[1] : "webp";
 
     return `${this.resizeApi}?format=${format}&file=${photo}&width=${parseInt(
       args[2]
     )}&height=${parseInt(args[3])} 1x, ${
       this.resizeApi
-    }?&format=${format}&file=${photo}&width=${parseInt(args[2]) * 2}&height=${
-      parseInt(args[3]) * 2
-    } 2x`;
+    }?&format=${format}&file=${photo}&width=${parseInt(args[2]) *
+      2}&height=${parseInt(args[3]) * 2} 2x`;
   }
 }
 </script>

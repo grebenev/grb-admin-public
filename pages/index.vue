@@ -26,6 +26,7 @@ import { Context } from '@nuxt/types';
 import { AxiosResponse, AxiosError } from 'axios';
 
 import Card from '@/components/Card.vue';
+import ButtonUi from '@/components/UI/ButtonUi.vue';
 
 interface Product {
   _id: string;
@@ -43,31 +44,32 @@ interface Index {
   header: string;
   asyncData({
     $axios,
-    error,
+    error
   }: Context): Promise<void | { products: Product[] }>;
 }
 
 @Component({
   components: {
     Card,
-  },
+    ButtonUi
+  }
 })
 export default class IndexPage extends Vue implements Index {
   header: string = 'All products';
 
   asyncData({ $axios, error }: Context) {
     return $axios
-      .get(`http://localhost:3000/api/products`)
+      .get(`${process.env.baseUrl}/api/products`)
       .then((res: AxiosResponse) => {
         const { products } = res.data;
         return {
-          products,
+          products
         };
       })
       .catch((err: AxiosError) => {
         error({
           statusCode: 404,
-          message: `No items found - ${err.message}`,
+          message: `No items found - ${err.message}`
         });
       });
   }

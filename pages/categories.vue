@@ -34,7 +34,7 @@ interface Categories {
 
   asyncData({
     $axios,
-    error,
+    error
   }: Context): Promise<void | { categories: Category[] }>;
 }
 
@@ -51,24 +51,24 @@ export default class CategoriesPage extends Vue implements Categories {
       category: {
         name: 'Create a new caterory',
         value: '',
-        placeholder: 'place a category',
-      },
-    },
+        placeholder: 'place a category'
+      }
+    }
   };
 
   asyncData({ $axios, error }: Context) {
     return $axios
-      .get(`http://localhost:3000/api/categories`)
+      .get(`${process.env.baseUrl}/api/categories`)
       .then((res: AxiosResponse) => {
         const { categories } = res.data;
         return {
-          categories,
+          categories
         };
       })
       .catch((err: AxiosError) => {
         error({
           statusCode: 404,
-          message: `No items found - ${err.message}`,
+          message: `No items found - ${err.message}`
         });
       });
   }

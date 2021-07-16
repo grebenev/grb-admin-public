@@ -36,8 +36,8 @@ interface Owner {
   components: {
     Form,
     List,
-    Dropzone,
-  },
+    Dropzone
+  }
 })
 export default class OwnersPage extends Vue implements Owner {
   header: string = 'Owner page';
@@ -50,30 +50,30 @@ export default class OwnersPage extends Vue implements Owner {
       name: {
         name: 'Create a new owner name',
         value: '',
-        placeholder: 'place a owner name',
+        placeholder: 'place a owner name'
       },
       about: {
         name: 'Describe a new owner',
         value: '',
         control: 'textarea',
-        placeholder: 'place describe',
-      },
-    },
+        placeholder: 'place describe'
+      }
+    }
   };
 
   asyncData({ $axios, error }: Context) {
     return $axios
-      .get(`http://localhost:3000/api/owners`)
+      .get(`${process.env.baseUrl}/api/owners`)
       .then((res: AxiosResponse) => {
         const { owners } = res.data;
         return {
-          owners,
+          owners
         };
       })
       .catch((err: AxiosError) => {
         error({
           statusCode: 404,
-          message: `No items found - ${err.message}`,
+          message: `No items found - ${err.message}`
         });
       });
   }
